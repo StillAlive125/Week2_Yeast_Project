@@ -1,0 +1,12 @@
+---
+title: "Yeast_Project"
+author: "Krish"
+format: html
+editor: visual
+---
+
+## **Data Acquisition**
+
+```{r}
+
+```
