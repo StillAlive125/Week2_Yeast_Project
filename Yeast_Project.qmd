@@ -8,5 +8,51 @@ editor: visual
 ## **Data Acquisition**
 
 ```{r}
+# 1. Create the data directory
+dir.create("data/raw_reads", recursive = TRUE)
 
+# 2. Define the download URL
+yeast_url <- "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR153/001/ERR1539001/ERR1539001.fastq.gz"
+
+# 3. Download the file
+# method="wget" is used for robustness with larger sequencing files
+download.file(url = yeast_url, 
+              destfile = "data/raw_reads/ERR1539001.fastq.gz", 
+              method = "wget")
+
+# 4. Verify the file is present
+list.files("data/raw_reads/")
+```
+
+## **The Audit & Filter (Replication)**
+
+### Sequali report(Pre-filtered)
+
+```{Bash}
+#| eval: fale
+# Activate your environment
+conda activate sequali_env
+
+# Run Sequali
+# --outdir: specifies where to save the HTML report
+mkdir reports
+sequali --outdir reports/sequali_pre data/raw_reads/ERR1539001.fastq.gz
+
+# Check the directory you are in, if you are in data/raw_reads already use this:
+# sequali --outdir reports/sequali_pre ./ont.reads.fastq.gz
+```
+
+### Sequali report(Post-filtered)
+
+```{R}
+dir.create("data/clean_reads")
+```
+
+```{bash}
+conda install filtlong
+
+filtlong --min_length 1100 --keep_percent 90 data/raw_reads/ERR1539001.fastq.gz | gzip > data/clean_reads/ERR1539001_Clean.fastq.gz
+ 
+ 
+ sequali --outdir reports/sequali_post data/clean_reads/ERR1539001_Clean.fastq.gz
 ```
